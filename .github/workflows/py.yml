@@ -1,0 +1,42 @@
+name: Python Linting
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8
+    
+    - name: Run flake8
+      run: |
+        # Run flake8 on all .py files except logger.py
+        Get-ChildItem -Recurse -Filter *.py | Where-Object { $_.Name -ne "logger.py" } | ForEach-Object { flake8 $_.FullName }
+      shell: pwsh
+      continue-on-error: true
+    
+    - name: Check for errors
+      run: |
+        # If any errors were found, fail the workflow
+        if ($LASTEXITCODE -ne 0) {
+          Write-Host "Linting errors found. Please fix them and try again."
+          exit 1
+        } else {
+          Write-Host "No linting errors found."
+        }
+      shell: pwsh
