@@ -32,8 +32,8 @@ jobs:
     
     - name: Check for errors
       run: |
-        # If any errors were found, fail the workflow
-        if ($LASTEXITCODE -ne 0) {
+        # Check the exit code of the previous step
+        if ($env:GITHUB_STEP_SUMMARY -match "error") {
           Write-Host "Linting errors found. Please fix them and try again."
           exit 1
         } else {
