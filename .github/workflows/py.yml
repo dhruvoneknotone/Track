@@ -36,7 +36,7 @@ jobs:
         if ($env:GITHUB_STEP_SUMMARY -match "error") {
           Write-Host "Linting errors found. Please fix them and try again."
           exit 1
-        } else {
+        } else {        
           Write-Host "No linting errors found."
         }
       shell: pwsh
