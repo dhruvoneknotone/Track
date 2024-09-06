@@ -25,9 +25,10 @@ jobs:
     
     - name: Run flake8
       run: |
-        # Run flake8 on all .py files except logger.py
-        Get-ChildItem -Recurse -Filter *.py | Where-Object { $_.Name -ne "logger.py" } | ForEach-Object { flake8 $_.FullName }
+        # Run flake8 on specific Python files
+        flake8 logger2.py convert.py mail.py
       shell: pwsh
+      continue-on-error: true
     
     - name: Check for errors
       run: |

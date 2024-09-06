@@ -75,7 +75,7 @@ def monitor_system_processes(duration):
                     psutil.AccessDenied, 
                     psutil.ZombieProcess):
                 pass
-        time.sleep(1)  # Check every second instead of every minute for dry run
+        time.sleep(1)  # Check every second
 
 def monitor_system_file_operations(duration):
     """
@@ -100,18 +100,14 @@ def monitor_system_file_operations(duration):
                     psutil.AccessDenied, 
                     psutil.ZombieProcess):
                 pass
-        time.sleep(1)  # Check every second instead of every minute for dry run
+        time.sleep(1)  # Check every second
 
 def main():
     """
     This is the main function of the script.
     It sets up logging, logs system startup, and starts threads for process and file operation monitoring.
     """
-    # Check if running in GitHub Actions
-    is_github_actions = os.environ.get('GITHUB_ACTIONS') == 'true'
-    
-    # Set duration based on environment
-    duration = 60 if is_github_actions else 3600  # 1 minute for GitHub Actions, 1 hour otherwise
+    duration = 10  # Set duration to 10 seconds
 
     current_date = datetime.now().strftime('%d-%m-%Y')
     log_dir = os.path.join(
@@ -120,7 +116,7 @@ def main():
     os.makedirs(log_dir, exist_ok=True)  # Ensure the directory exists
     txt_files = [f for f in os.listdir(log_dir) if f.endswith('.txt')]
     print("Text files found:", txt_files)  # Debug print
-    if txt_files and is_github_actions:
+    if txt_files:
         print("A txt file already exists in the path. Exiting the program.")
     else:
         try:
