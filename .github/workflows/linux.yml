@@ -1,4 +1,4 @@
-name: Dry Run Check
+name: Linux Dry Run
 
 on:
   push:
