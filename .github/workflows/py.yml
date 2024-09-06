@@ -11,7 +11,8 @@ jobs:
     runs-on: windows-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
     
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -24,19 +25,23 @@ jobs:
         pip install flake8
     
     - name: Run flake8
+      id: lint
       run: |
-        # Run flake8 on specific Python files
-        flake8 logger2.py convert.py mail.py
+        # Run flake8 on specific Python files and save the output to a file
+        flake8 logger2.py convert.py mail.py > flake8.log || exit $LASTEXITCODE
       shell: pwsh
-      continue-on-error: true
     
     - name: Check for errors
       run: |
-        # Check the exit code of the previous step
-        if ($env:GITHUB_STEP_SUMMARY -match "error") {
-          Write-Host "Linting errors found. Please fix them and try again."
+        # Check the flake8.log for errors
+        $logContent = Get-Content flake8.log
+        if ($logContent) {
+          Write-Host "Linting errors found in the following files:"
+          $logContent | ForEach-Object {
+            Write-Host $_
+          }
           exit 1
-        } else {        
+        } else {
           Write-Host "No linting errors found."
         }
       shell: pwsh
