@@ -28,7 +28,11 @@ jobs:
       id: lint
       run: |
         # Run flake8 on specific Python files and save the output to a file
-        flake8 logger2.py convert.py mail.py > flake8.log || exit $LASTEXITCODE
+        flake8 logger2.py convert.py mail.py > flake8.log
+        if ($LASTEXITCODE -ne 0) {
+          Write-Host "flake8 reported issues."
+          exit $LASTEXITCODE
+        }
       shell: pwsh
     
     - name: Check for errors
