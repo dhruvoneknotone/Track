@@ -29,6 +29,9 @@ jobs:
       run: |
         # Run flake8 on specific Python files and save the output to a file
         flake8 logger2.py convert.py mail.py > flake8.log
+        # Output the content of the log to the GitHub Actions log
+        Get-Content flake8.log | Write-Host
+        # Check if flake8 found issues
         if ($LASTEXITCODE -ne 0) {
           Write-Host "flake8 reported issues."
           exit $LASTEXITCODE
