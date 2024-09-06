@@ -5,16 +5,18 @@ import psutil
 import threading
 import sys
 import logging
-import socket
+
 
 def resource_path(relative_path):
     """
     This function returns the absolute path of a resource file.
-    It checks if the script is running in a GitHub Actions environment and returns the path accordingly.
+    It checks if the script is running in a GitHub Actions environment 
+    and returns the path accordingly.
     """
     if os.environ.get('GITHUB_ACTIONS'):
         return os.path.join(os.environ.get('GITHUB_WORKSPACE', ''), relative_path)
     return os.path.abspath(os.path.join(os.path.dirname(__file__), relative_path))
+
 
 def setup_logging():
     """
@@ -24,11 +26,14 @@ def setup_logging():
     current_date = datetime.now().strftime('%d-%m-%Y')
     log_dir = os.path.join(resource_path("Logs"), current_date)
     os.makedirs(log_dir, exist_ok=True)
-    log_file = os.path.join(log_dir, f"system_monitor_{datetime.now().strftime('%d-%m-%Y_%H-%M')}.txt")
+    log_file = os.path.join(
+        log_dir, f"system_monitor_{datetime.now().strftime('%d-%m-%Y_%H-%M')}.txt"
+    )
     logging.basicConfig(
         filename=log_file, level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s'
     )
+
 
 def log_system_startup():
     """
@@ -38,10 +43,11 @@ def log_system_startup():
     runner_name = os.environ.get('RUNNER_NAME', 'Unknown Runner')
     logging.info(f"Runner Name: {runner_name}")
     print(f"Runner Name: {runner_name}")
-    
+
     run_id = os.environ.get('GITHUB_RUN_ID', 'Unknown Run ID')
     logging.info(f"Workflow Run ID: {run_id}")
     print(f"Workflow Run ID: {run_id}")
+
 
 def monitor_system_processes(duration):
     """
@@ -65,6 +71,7 @@ def monitor_system_processes(duration):
                 pass
         time.sleep(1)
 
+
 def monitor_system_file_operations(duration):
     """
     This function monitors system file operations.
@@ -87,6 +94,7 @@ def monitor_system_file_operations(duration):
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass
         time.sleep(1)
+
 
 def main():
     """
@@ -120,5 +128,7 @@ def main():
             return 1
         return 0
 
+
 if __name__ == "__main__":
     sys.exit(main())
+

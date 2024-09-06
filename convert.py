@@ -7,8 +7,10 @@ import sys
 import logging
 import datetime
 
+
 def resource_path(relative_path):
     return os.path.join(os.getcwd(), relative_path)
+
 
 def setup_logging():
     current_date = datetime.datetime.now().strftime('%d-%m-%Y')
@@ -17,6 +19,7 @@ def setup_logging():
     log_file = os.path.join(log_dir, "convert.log")
     logging.basicConfig(filename=log_file, level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 def convert_txt_to_pdf():
     setup_logging()
@@ -43,19 +46,19 @@ def convert_txt_to_pdf():
 
         pdf = canvas.Canvas(output_file_path, pagesize=letter)
         with open(input_file, 'r', encoding='utf-8') as file:
-            y_position = 10*inch
+            y_position = 10 * inch
             for line in file:
                 if len(line) > 80:
                     lines = [line[i:i+60] for i in range(0, len(line), 60)]
                     for line in lines:
-                        pdf.drawString(1*inch, y_position, line.rstrip())
-                        y_position -= 0.5*inch
+                        pdf.drawString(1 * inch, y_position, line.rstrip())
+                        y_position -= 0.5 * inch
                 else:
-                    pdf.drawString(1*inch, y_position, line.rstrip())
-                    y_position -= 0.5*inch
-                if y_position < 1*inch:
+                    pdf.drawString(1 * inch, y_position, line.rstrip())
+                    y_position -= 0.5 * inch
+                if y_position < 1 * inch:
                     pdf.showPage()
-                    y_position = 10*inch
+                    y_position = 10 * inch
         pdf.save()
 
         shutil.move(input_file, report_dir)
@@ -67,8 +70,10 @@ def convert_txt_to_pdf():
         logging.error(f"An error occurred: {str(e)}")
         return 1
 
+
 def main():
     return convert_txt_to_pdf()
+
 
 if __name__ == "__main__":
     sys.exit(main())
