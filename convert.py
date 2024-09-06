@@ -1,27 +1,43 @@
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.units import inch
 import os
 import shutil
 import sys
 import logging
 import datetime
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
 
 
 def resource_path(relative_path):
-    return os.path.join(os.getcwd(), relative_path)
+    """
+    This function returns the absolute path of a resource file.
+    It checks if the script is running in a GitHub Actions environment 
+    and returns the path accordingly.
+    """
+    if os.environ.get('GITHUB_ACTIONS'):
+        return os.path.join(os.environ.get('GITHUB_WORKSPACE', ''), relative_path)
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), relative_path))
 
 
 def setup_logging():
+    """
+    This function sets up the logging configuration.
+    It creates a log directory with the current date and sets up a basic configuration for logging.
+    """
     current_date = datetime.datetime.now().strftime('%d-%m-%Y')
     log_dir = os.path.join(resource_path("Logs"), current_date)
     os.makedirs(log_dir, exist_ok=True)
     log_file = os.path.join(log_dir, "convert.log")
-    logging.basicConfig(filename=log_file, level=logging.INFO,
-                        format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.basicConfig(
+        filename=log_file, level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s'
+    )
 
 
 def convert_txt_to_pdf():
+    """
+    Converts text files to PDF format and moves the original text files to a report directory.
+    """
     setup_logging()
     logging.info("Starting conversion process")
 
@@ -49,7 +65,7 @@ def convert_txt_to_pdf():
             y_position = 10 * inch
             for line in file:
                 if len(line) > 80:
-                    lines = [line[i:i+60] for i in range(0, len(line), 60)]
+                    lines = [line[i:i + 60] for i in range(0, len(line), 60)]
                     for line in lines:
                         pdf.drawString(1 * inch, y_position, line.rstrip())
                         y_position -= 0.5 * inch
@@ -72,8 +88,13 @@ def convert_txt_to_pdf():
 
 
 def main():
+    """
+    This is the main function of the script.
+    It starts the conversion process.
+    """
     return convert_txt_to_pdf()
 
 
 if __name__ == "__main__":
     sys.exit(main())
+
