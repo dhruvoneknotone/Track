@@ -4,13 +4,10 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 import os
-import glob
-import shutil
-import time
-import sys
+import json
 import logging
 from datetime import datetime
-import json
+import sys  # Import the sys module
 
 
 def resource_path(relative_path):
@@ -25,7 +22,7 @@ def setup_logging():
     This function sets up the logging configuration.
     """
     current_date = datetime.now().strftime('%d-%m-%Y')
-    log_dir = resource_path(os.path.join("Logs", current_date))
+    log_dir = os.path.join("Logs", current_date)
     os.makedirs(log_dir, exist_ok=True)
     log_file = os.path.join(log_dir, "mail.log")
     logging.basicConfig(
@@ -94,4 +91,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
