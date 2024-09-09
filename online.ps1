@@ -24,10 +24,18 @@ if (-not (Test-Path $BASE_PATH)) {
     New-Item -ItemType Directory -Path $BASE_PATH -Force
 }
 
-# Clone the GitHub repository into the base path
-git clone https://github.com/dhruvoneknotone/Track.git "$BASE_PATH" -q
-
-Write-Host "Repository cloned successfully."
+# Check if the GitHub repository already exists in the base path
+if (-not (Test-Path "$BASE_PATH/.git")) {
+    # Clone the GitHub repository into the base path
+    git clone https://github.com/dhruvoneknotone/Track.git "$BASE_PATH" -q
+    Write-Host "Repository cloned successfully."
+} else {
+    # If the repository exists, pull the latest changes
+    Set-Location $BASE_PATH
+    git pull -q
+    Write-Host "Repository updated successfully."
+    Set-Location -
+}
 
 # Check if any file exists in the startup folder
 $STARTUP_FOLDER = "C:\Users\DeLL\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
