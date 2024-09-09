@@ -45,5 +45,8 @@ if (-not (Get-ChildItem -Path $STARTUP_FOLDER -Filter "start_main.bat" -ErrorAct
     Set-Content -Path $BAT_FILE -Value "cd $BASE_PATH`nmain.bat" -Force
 
     # Move the batch file to the startup folder
+    if (Test-Path "$STARTUP_FOLDER\start_main.bat") {
+        Remove-Item -Path "$STARTUP_FOLDER\start_main.bat" -Force
+    }
     Move-Item -Path $BAT_FILE -Destination $STARTUP_FOLDER -Force
 }
