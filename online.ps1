@@ -31,9 +31,9 @@ Write-Host "Repository cloned successfully."
 
 # Check if any file exists in the startup folder
 $STARTUP_FOLDER = "C:\Users\DeLL\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
-if (-not (Get-ChildItem -Path $STARTUP_FOLDER -ErrorAction SilentlyContinue)) {
+$BAT_FILE = "$BASE_PATH\start_main.bat"
+if (-not (Get-ChildItem -Path $STARTUP_FOLDER -Filter "start_main.bat" -ErrorAction SilentlyContinue)) {
     # Create a batch file to start main.bat in the base path
-    $BAT_FILE = "$BASE_PATH\start_main.bat"
     Set-Content -Path $BAT_FILE -Value "cd $BASE_PATH`nmain.bat" -Force
 
     # Move the batch file to the startup folder
