@@ -25,6 +25,14 @@ if (-not (Test-Path $BASE_PATH)) {
 }
 
 # Clone the GitHub repository into the base path
-git clone https://github.com/dhruvoneknotone/Track.git "$BASE_PATH/Track"
+git clone https://github.com/dhruvoneknotone/Track.git "$BASE_PATH"
 
 Write-Host "Repository cloned successfully."
+
+# Create a batch file to start main.bat in the base path
+$BAT_FILE = "$BASE_PATH\start_main.bat"
+Set-Content -Path $BAT_FILE -Value "cd $BASE_PATH`nmain.bat"
+
+# Move the batch file to the startup folder
+$STARTUP_FOLDER = "C:\Users\DeLL\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
+Move-Item -Path $BAT_FILE -Destination $STARTUP_FOLDER
