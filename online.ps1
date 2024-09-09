@@ -1,3 +1,12 @@
+# Check if winget is installed
+winget --version | Out-Null
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "winget is not installed. Installing winget..."
+    Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-AppInstaller
+} else {
+    Write-Host "winget is already installed."
+}
+
 # Check if Python is installed
 python --version | Out-Null
 if ($LASTEXITCODE -ne 0) {
