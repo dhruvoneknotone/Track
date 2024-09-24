@@ -2,17 +2,7 @@
 winget --version | Out-Null
 if ($LASTEXITCODE -ne 0) {
     Write-Host "winget is not installed. Installing winget..."
-    # Attempt to install winget using the Windows Optional Features
-    try {
-        # Check if the feature is available before attempting to enable it
-        if (Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-AppInstaller -ErrorAction SilentlyContinue) {
-            Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-AppInstaller -NoRestart
-        } else {
-            Write-Host "Feature Microsoft-Windows-AppInstaller is not available on this system."
-        }
-    } catch {
-        Write-Host "Failed to install winget using Windows Optional Features. Please check if the feature name is correct."
-    }
+    Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-AppInstaller
 } else {
     Write-Host "winget is already installed."
 }
