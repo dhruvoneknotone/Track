@@ -14,28 +14,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
-
-    - name: Install dependencies
+    - name: Run PowerShell script
       run: |
-        python -m pip install --upgrade pip
-        pip install psutil
-
-    - name: Run dry_run.bat
-      run: |
-        cmd /c dry_run.bat
-      shell: cmd
+        powershell ./online.ps1
+      shell: pwsh
       working-directory: ${{ github.workspace }}
 
     - name: Check for errors
       run: |
-        if %ERRORLEVEL% neq 0 (
-          echo "Error occurred during dry run"
-          exit /b 1
-        ) else (
-          echo "Dry run completed successfully"
-        )
-      shell: cmd
+        if ($LASTEXITCODE -ne 0) {
+          Write-Host "Error occurred during dry run"
+          exit $LASTEXITCODE
+        } else {
+          Write-Host "All PowerShell scripts executed successfully"
+        }
+      shell: pwsh
