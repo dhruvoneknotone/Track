@@ -28,6 +28,7 @@ jobs:
       run: |
         cmd /c dry_run.bat
       shell: cmd
+      working-directory: ${{ github.workspace }}
 
     - name: Check for errors
       run: |
