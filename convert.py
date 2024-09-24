@@ -1,3 +1,7 @@
+"""
+Module for converting text files to PDF format and logging the process.
+"""
+
 import os
 import shutil
 import sys
@@ -10,7 +14,7 @@ from reportlab.lib.units import inch
 
 def resource_path(relative_path):
     """
-    This function returns the absolute path of a resource file.
+    Returns the absolute path of a resource file.
     It checks if the script is running in a GitHub Actions environment 
     and returns the path accordingly.
     """
@@ -21,7 +25,7 @@ def resource_path(relative_path):
 
 def setup_logging():
     """
-    This function sets up the logging configuration.
+    Sets up the logging configuration.
     It creates a log directory with the current date and sets up a basic configuration for logging.
     """
     current_date = datetime.datetime.now().strftime('%d-%m-%Y')
@@ -58,7 +62,7 @@ def convert_txt_to_pdf():
         output_file = txt_files[0].replace('.txt', '.pdf')
         output_file_path = os.path.join(log_dir, output_file)
 
-        logging.info(f"Converting {input_file} to {output_file_path}")
+        logging.info("Converting %s to %s", input_file, output_file_path)  # Updated logging
 
         pdf = canvas.Canvas(output_file_path, pagesize=letter)
         with open(input_file, 'r', encoding='utf-8') as file:
@@ -78,12 +82,12 @@ def convert_txt_to_pdf():
         pdf.save()
 
         shutil.move(input_file, report_dir)
-        logging.info(f"Moved {input_file} to {report_dir}")
+        logging.info("Moved %s to %s", input_file, report_dir)  # Updated logging
 
         logging.info("Conversion process completed successfully")
         return 0
-    except Exception as e:
-        logging.error(f"An error occurred: {str(e)}")
+    except (OSError, ValueError) as e:  # Catch specific exceptions
+        logging.error("An error occurred: %s", str(e))  # Use lazy formatting
         return 1
 
 
@@ -97,4 +101,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
