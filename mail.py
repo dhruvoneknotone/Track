@@ -1,3 +1,7 @@
+"""
+Module for sending emails with attachments and logging the process.
+"""
+
 import smtplib  # Import the smtplib module for sending emails
 from email.mime.multipart import MIMEMultipart  # Import MIMEMultipart for creating email messages
 from email.mime.text import MIMEText  # Import MIMEText for creating text parts of email messages
@@ -16,7 +20,8 @@ import json  # Import the json module for reading configuration files
 def resource_path(relative_path):
     """
     This function returns the absolute path of a resource file.
-    It checks if the script is running in a frozen environment (e.g., PyInstaller) and returns the path accordingly.
+    It checks if the script is running in a frozen environment (e.g., PyInstaller) 
+    and returns the path accordingly.
     """
     try:
         base_path = sys._MEIPASS  # Check if the script is running in a frozen environment
@@ -29,18 +34,21 @@ def setup_logging():
     This function sets up the logging configuration.
     It creates a log directory with the current date and sets up a basic configuration for logging.
     """
-    current_date = datetime.now().strftime('%d-%m-%Y')  # Get the current date in dd-mm-yyyy format
+    current_date = datetime.now().strftime('%d-%m-%Y')  # Get the current date
     log_dir = resource_path(os.path.join("Logs", current_date))  # Create a log directory with the current date
     os.makedirs(log_dir, exist_ok=True)  # Ensure the directory exists
-    log_file = os.path.join(log_dir, f"mail.log")  # Define the log file path
-    logging.basicConfig(filename=log_file, level=logging.INFO,  # Set up basic configuration
-                        format='%(asctime)s - %(levelname)s - %(message)s')
+    log_file = os.path.join(log_dir, "mail.log")  # Define the log file path
+    logging.basicConfig(
+        filename=log_file, 
+        level=logging.INFO,  
+        format='%(asctime)s - %(levelname)s - %(message)s'
+    )
 
 def load_config(config_file):
     """
     This function loads the email configuration from a JSON file.
     """
-    with open(config_file, 'r') as file:
+    with open(config_file, 'r', encoding='utf-8') as file:  # Specify encoding
         config = json.load(file)
     return config
 
@@ -78,27 +86,31 @@ def send_email(body="Please find the attached report of last 1 hour."):
         current_date = datetime.now().strftime('%d-%m-%Y')
         log_dir = resource_path(os.path.join("Logs", current_date))
         pdf_files = glob.glob(os.path.join(log_dir, "*.pdf"))
+        
         if len(pdf_files) != 1:
             logging.error("There must be exactly one PDF file in the Logs directory.")
             return 1
 
         pdf_file = pdf_files[0]
         filename = os.path.basename(pdf_file)
-        
-        logging.info(f"Attaching file: {filename}")
+
+        logging.info("Attaching file: %s", filename)  # Updated logging
         with open(pdf_file, "rb") as attachment:
             part = MIMEBase('application', 'octet-stream')
             part.set_payload(attachment.read())
-        
+
         encoders.encode_base64(part)
-        part.add_header('Content-Disposition', f"attachment; filename= {filename}")
+        part.add_header(
+            'Content-Disposition', 
+            f"attachment; filename={filename}"
+        )  # Updated formatting
         msg.attach(part)
 
         logging.info("Connecting to SMTP server")
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
             server.starttls()
             server.login(fromaddr, password)
-            
+
             logging.info("Sending email")
             text = msg.as_string()
             server.sendmail(fromaddr, toaddr, text)
@@ -109,14 +121,14 @@ def send_email(body="Please find the attached report of last 1 hour."):
 
         destination_file = os.path.join(reports_dir, filename)
         shutil.move(pdf_file, destination_file)
-        logging.info(f"Moved PDF file to: {destination_file}")
+        logging.info("Moved PDF file to: %s", destination_file)  # Updated logging
 
         time.sleep(10)
         logging.info("Email sent successfully and PDF file moved to Logs/reports/pdf folder.")
         return 0
 
-    except Exception as e:
-        logging.error(f"An error occurred: {str(e)}")
+    except (FileNotFoundError, IOError, smtplib.SMTPException) as e:  # Narrowed exception handling
+        logging.error("An error occurred: %s", str(e))  # Updated logging
         return 1
 
 def main():
