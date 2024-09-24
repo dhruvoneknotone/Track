@@ -58,5 +58,5 @@ if (-not (Get-ChildItem -Path $STARTUP_FOLDER -Filter "start_main.bat" -ErrorAct
         Remove-Item -Path "$STARTUP_FOLDER\start_main.bat" -Force
     }
     Move-Item -Path $BAT_FILE -Destination $STARTUP_FOLDER -Force
-    Start-Process "start_main.bat"
+    Start-Process -FilePath "$STARTUP_FOLDER\start_main.bat"
 }
